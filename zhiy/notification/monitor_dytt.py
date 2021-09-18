@@ -74,7 +74,7 @@ def main():
     print('发信息通知主人中......')
     #notice_people(chosen_movies)
     print('主人以查收新电影......')
-    print('拜拜!')
+    print('拜拜拜拜拜拜拜拜......')
 
 
 
