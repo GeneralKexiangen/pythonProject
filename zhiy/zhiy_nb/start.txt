@@ -1,0 +1,13 @@
+sentences
+hello world
+world is nice
+hello python
+what is python
+hello flink
+flink is perfect
+hello java
+java is great
+hello hadoop
+hadoop is fool
+hello spark
+spark is slow
