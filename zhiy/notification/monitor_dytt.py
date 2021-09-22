@@ -45,7 +45,10 @@ def get_like_movies(movies):
         else:
             DouBan_score = 0
         du = str(span).split('<a href="')[1].split('"')[0]
-        img = str(span).split('img alt="" border="0" src="')[1].split('"')[0]
+        if 'img alt="" border="0" src="' in str(span):
+            img = str(span).split('img alt="" border="0" src="')[1].split('"')[0]
+        else:
+            img = ''
         print(IMDB_score, DouBan_score, du, img)
         if float(IMDB_score) < 7 and float(DouBan_score) < 7.5:
             delete_movies.append(movie)
@@ -75,8 +78,6 @@ def main():
     #notice_people(chosen_movies)
     print('主人以查收新电影......')
     print('拜拜拜拜拜拜拜拜......')
-
-
 
 
 if __name__ == '__main__':
