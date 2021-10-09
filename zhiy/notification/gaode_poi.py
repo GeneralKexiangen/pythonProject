@@ -11,7 +11,7 @@ class getpoi:
     amap_web_key = '8d9d71bafb555ae4975d3ba796e49fd1'
     poi_search_url = "https://restapi.amap.com/v3/place/text?key=%s&extensions=all&keywords=&types=%s&city=%s&citylimit=true&offset=25&page=%s&output=json"
     cityname = '杭州'
-    areas = ['西湖区', '滨江区']
+    areas = ['西湖区', '滨江区', '余杭区']
     totalcontent = {}
 
     def __init__(self):
@@ -65,6 +65,8 @@ class getpoi:
         sheet.write(0, 5, 'smallclass')
         sheet.write(0, 6, 'typecode')
         sheet.write(0, 7, 'midclass')
+        sheet.write(0, 8, 'tel')
+        sheet.write(0, 9, 'address')
         classname = data[0]['bigclass']
         for i in range(len(data)):
             sheet.write(i + 1, 0, data[i]['lng'])
@@ -75,6 +77,8 @@ class getpoi:
             sheet.write(i + 1, 5, data[i]['smallclass'])
             sheet.write(i + 1, 6, data[i]['classname'])
             sheet.write(i + 1, 7, data[i]['midclass'])
+            sheet.write(i + 1, 8, data[i]['tel'])
+            sheet.write(i + 1, 9, data[i]['address'])
         book.save(self.output_path + self.cityname + '_' + classname + '.xls')
 
     def hand(self, poidate):
@@ -86,6 +90,8 @@ class getpoi:
             content['lat'] = float(str(pois[i]['location']).split(",")[1])
             content['name'] = pois[i]['name']
             content['adname'] = pois[i]['adname']
+            content['tel'] = pois[i]['tel']
+            content['address'] = pois[i]['address']
             content['classname'] = pois[i]['typecode']
             poilist.append(content)
         return poilist
@@ -99,7 +105,7 @@ class getpoi:
         data = []
         for num in range(readcontent.shape[0]):
             content = {}
-            if readcontent.iloc[num]['小类'] == '湖北菜(鄂菜)':
+            if readcontent.iloc[num]['小类'] == '网球场':
                 content['type_num'] = readcontent.iloc[num]['NEW_TYPE']
                 content['bigclass'] = readcontent.iloc[num]['大类']
                 content['midclass'] = readcontent.iloc[num]['中类']
