@@ -9,18 +9,18 @@ import jieba
 st.set_page_config('My Movies!')
 
 
-@st.cache
+@st.cache_data
 def get_user_ratings():
-    df = pd.read_csv('/Users/zhiyue/Downloads/archive/ratings.csv')
+    df = pd.read_csv('/Users/zhiyue/Downloads/datasets/movies/archive/ratings.csv')
     return df
 
 
 data = get_user_ratings()
 
 
-@st.cache
+@st.cache_data
 def get_movie_names():
-    df = pd.read_csv('/Users/zhiyue/Downloads/imdb_data_csv/title.csv'
+    df = pd.read_csv('/Users/zhiyue/Downloads/datasets/movies/imdb_data_csv/title.csv'
                      , header=None,
                      names=['id', 'title', 'kind_id', 'episode_nr', 'episode_of_id', 'imdb_id', 'imdb_index'
                          , 'md5sum', 'phonetic_code', 'production_year', 'season_nr', 'series_years']
@@ -32,7 +32,7 @@ def get_movie_names():
 movie_names = get_movie_names()
 
 
-@st.cache
+@st.cache_data
 def get_recommend_list():
     with open('/Users/zhiyue/PycharmProjects/pythonProject/pt_st/moviesRecommend20220405/recommend_list.json', 'r',
               encoding='utf8') as fp:
@@ -56,7 +56,7 @@ def fig_movies(all_movies):
     return fig
 
 
-@st.cache
+@st.cache_data
 def get_cut_words():
     with open('/Users/zhiyue/PycharmProjects/pythonProject/pt_st/moviesRecommend20220405/words.data', 'r',
               encoding='utf8') as fp:
