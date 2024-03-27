@@ -3,7 +3,7 @@ import pandas as pd
 import random
 from major_embeddings import EmbeddingsCalculator
 from embeddings import allEmbeddingsCalculator
-embeddings_calculator = allEmbeddingsCalculator()
+# embeddings_calculator = allEmbeddingsCalculator()
 
 
 def get_mcs(input_text):
@@ -24,24 +24,24 @@ def get_ms(input_text):
     print(major_scores)
     return major_scores
 
-def get_gs(input_text):
-    ta = allEmbeddingsCalculator()
-    gs = ta.general_scores(input_text)
-    print(gs)
-    return gs
-def weighted_accuracy(input_text, embeddings_calculator):
-    topic_probabilities_df = embeddings_calculator.calculate_topic_probabilities(input_text)
-    topic_probabilities_df = topic_probabilities_df[topic_probabilities_df['sub_topic'] != 'Student opportunities']
-    total_probability = topic_probabilities_df['topic_probability'].sum()
-    topic_probabilities_df['normalized_probability'] = topic_probabilities_df['topic_probability'] / total_probability
-    accuracy_df = pd.read_csv('accuracy_per_sub_topic.csv')
-    accuracy_df['Accuracy'] = pd.to_numeric(accuracy_df['Accuracy'], errors='coerce')
-    accuracy_dict = accuracy_df.set_index('Sub_Topic')['Accuracy'].to_dict()
-    weighted_avg_accuracy = sum(
-        topic_probabilities_df['normalized_probability'] *
-        topic_probabilities_df['sub_topic'].apply(lambda topic: accuracy_dict.get(topic, 0))
-    )
-    return weighted_avg_accuracy
+# def get_gs(input_text):
+#     ta = allEmbeddingsCalculator()
+#     gs = ta.general_scores(input_text)
+#     print(gs)
+#     return gs
+# def weighted_accuracy(input_text, embeddings_calculator):
+#     topic_probabilities_df = embeddings_calculator.calculate_topic_probabilities(input_text)
+#     topic_probabilities_df = topic_probabilities_df[topic_probabilities_df['sub_topic'] != 'Student opportunities']
+#     total_probability = topic_probabilities_df['topic_probability'].sum()
+#     topic_probabilities_df['normalized_probability'] = topic_probabilities_df['topic_probability'] / total_probability
+#     accuracy_df = pd.read_csv('accuracy_per_sub_topic.csv')
+#     accuracy_df['Accuracy'] = pd.to_numeric(accuracy_df['Accuracy'], errors='coerce')
+#     accuracy_dict = accuracy_df.set_index('Sub_Topic')['Accuracy'].to_dict()
+#     weighted_avg_accuracy = sum(
+#         topic_probabilities_df['normalized_probability'] *
+#         topic_probabilities_df['sub_topic'].apply(lambda topic: accuracy_dict.get(topic, 0))
+#     )
+#     return weighted_avg_accuracy
 
 st.set_page_config(
     page_title="Reach Best LUR Bot", layout="centered", page_icon="logo.png", initial_sidebar_state="expanded"
@@ -59,7 +59,7 @@ description = """
 """
 st.markdown(description, unsafe_allow_html=True)
 
-ID_weight = pd.read_csv('./ID weight_review.csv')
+ID_weight = pd.read_csv('/Users/kehaigen/PycharmProjects/pythonProject/pt_st/MajorReviewModel20231128/ID weight_review.csv')
 
 
 with st.sidebar:
@@ -77,7 +77,7 @@ with st.sidebar:
            unsafe_allow_html=True,
         )
 
-    st.divider()
+    # st.divider()
   
     st.info("To access the official chat bot trained for over 1000+ Universities, check out [Reach Best](https://app.reachbest.co/signup)!", icon="🧠")
     bullet_col1, bullet_col2 = st.columns(2, gap="large")
@@ -187,7 +187,7 @@ if username:
 
 if 'test' not in st.session_state:
     st.session_state.test = 0
-sslist = ['selected_university','df','df_major','df_final']
+sslist = ['selected_university','df','df_major','df_final','weight','cs1','cs2']
 for ss in sslist:
     if ss not in st.session_state:
         st.session_state[ss] = None
@@ -209,14 +209,14 @@ if st.button("Recommend"):
             [username, weight, 1 - weight,
              answer1, answer2], index=ID_weight.columns).T],
                   ignore_index=True).to_csv(
-            './ID weight_review.csv', index=False)
+            '/Users/kehaigen/PycharmProjects/pythonProject/pt_st/MajorReviewModel20231128/ID weight_review.csv', index=False)
         with st.spinner('Running...'):
 
-            df = get_gs(input_text=answer1)
+            df = get_ms(input_text=answer1)
             df = df.reset_index()
             df.columns = ['University', 'WAS', 'Highest_Prob_Topic', 'Most_Relevant_Review']
 
-            df_major = get_ms(input_text=answer1)
+            df_major = get_ms(input_text=answer2)
             df_major = df_major.reset_index()
             df_major.columns = ['University', 'WAS', 'Highest_Prob_Topic', 'Most_Relevant_Review']
 
@@ -234,8 +234,10 @@ if st.button("Recommend"):
             df_final["index"] = df_final["level_0"]+1
             df_final = df_final[['index','University','WAS1','WAS2','WAS']]
             df_final.columns = ["Rank", "University",  "Major Review Prob.", "General Review Prob.","Weighted Avg."]
-
             st.success("✅Recommend success")
+            cs1 = get_mcs(answer1)
+            cs2 = get_gcs(answer2)
+
             if df_final is not None:
                 st.session_state.df_final = df_final
                 st.session_state.test += 1
@@ -243,15 +245,22 @@ if st.button("Recommend"):
                 st.session_state.df = df
             if df_major is not None:
                 st.session_state.df_major = df_major
+            if weight is not None:
+                st.session_state.weight = weight
+            if cs1 is not None:
+                st.session_state.cs1 = cs1
+            if cs2 is not None:
+                st.session_state.cs2 = cs2
 
-st.dataframe(st.session_state.df_final, use_container_width=True, hide_index=True)
-st.info(f'How confident is the model? \n\nBased on your major-specific answer, our topic related weight average accuracy is  **{100*round((0.28*(1-weight_flag)+0.38*weight_flag), 2)}%** ',icon="ℹ")
-cs1 = get_mcs(answer1)
-cs2 = get_gcs(answer2)
-st.info(
-    f'The relevance of your major-specific to our reviews data is **{round(cs2*100, 2)}%**\n\nThe relevance of your major-specific to our reviews data is **{round(cs2*100, 2)}%**',
-    icon="ℹ")
-if st.session_state.test>=1:
+if st.session_state.test >= 1:
+    st.dataframe(st.session_state.df_final, use_container_width=True, hide_index=True)
+    st.info(
+        f'How confident is the model? \n\nBased on your major-specific answer, our topic related weight average accuracy is  **{100 * round((0.28 * (1 - st.session_state.weight) + 0.38 * st.session_state.weight), 2)}%** ',
+        icon="ℹ")
+    st.info(
+        f'The relevance of your major-specific to our reviews data is **{round(st.session_state.cs1 * 100, 2)}%**\n\nThe relevance of your major-specific to our reviews data is **{round(st.session_state.cs2 * 100, 2)}%**',
+        icon="ℹ")
+
     selected_university = st.selectbox("Select a University to view reviews:", st.session_state.df_final["University"].unique())
     st.session_state.selected_university=selected_university
 

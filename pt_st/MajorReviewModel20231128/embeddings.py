@@ -15,7 +15,7 @@ class allEmbeddingsCalculator:
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         # Load data and preprocess stop words
-        self.df_all = pd.read_csv("/MajorReviewModel20231128/alltext.csv", encoding='ISO-8859-1')
+        self.df_all = pd.read_csv("/Users/kehaigen/PycharmProjects/pythonProject/pt_st/MajorReviewModel20231128/alltext.csv", encoding='ISO-8859-1')
         self.tmp = []
         for item in self.df_all["reviews_lemmatized"].apply(lambda x: x.split()):
             self.tmp.extend(item)

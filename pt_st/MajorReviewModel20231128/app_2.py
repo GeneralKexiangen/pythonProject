@@ -240,10 +240,6 @@ if st.button("Recommend"):
             df_final['WAS'] = df_final['WAS1']*weight+df_final['WAS2']*(1-weight)
             df_final = df_final.sort_values(by='WAS', ascending=False)[:7].reset_index().reset_index()
 
-            # df = df.drop('reviews', axis=1).groupby('University').mean().sort_values(by='similarities')
-            # df_major = df_major.drop('reviews', axis=1).groupby('University').mean().sort_values(by='similarities')
-            # df_final = df+df_major
-            # df_final = pd.concat([df_final.sort_values(by='similarities', ascending=False)[:7], df_major, df], axis=1)[:7].reset_index().reset_index()
             df_final["index"] = df_final["level_0"]+1
             df_final = df_final[['index','University','WAS1','WAS2','WAS']]
             df_final.columns = ["Rank", "University",  "Major Review Prob.", "General Review Prob.","Weighted Avg."]
@@ -275,41 +271,7 @@ if st.button("Recommend"):
                 st.write("#### Major-Specific Topic:")
                 st.write(major_topic)
 
-#             st.success("✅Recommend success")
-#             st.dataframe(df_final, use_container_width=True, hide_index=True)
-#             selected_university = st.selectbox("Select a University to view reviews:", df_final["University"].unique())
-#             def update_selected_university():
-#                 st.session_state.selected_university = st.session_state.university_selector
 
-#             # Dropdown for selecting a university
-            if 'selected_university' not in st.session_state:
-                st.session_state.selected_university = None
-
-            st.session_state.university_selector = st.selectbox(
-                "Select a University to view reviews:",
-                df_final["University"].unique(),
-                key='university_selector',
-                on_change=update_selected_university
-            )
-            selected_university = st.session_state.selected_university
-
-#             # Display reviews for the selected university
-#
-#             if selected_university:
-#                 st.write(f"### Reviews for {selected_university}:")
-#                 general_review = df_copy.loc[selected_university].sort_values(by='similarities', ascending=False)['reviews'].values[0]
-#                 major_review = df_major_copy.loc[selected_university].sort_values(by='similarities', ascending=False)['reviews'].values[0]
-
-#                 st.write("#### General Review:")
-#                 st.write(general_review)
-
-#                 st.write("#### Major-Specific Review:")
-#                 st.write(major_review)
-
-#             for name in df_final["University"]:
-#                 with st.expander(name):
-#                     st.write(df_copy.loc[name].sort_values(by='similarities', ascending=False)['reviews'].values[0])
-#                     st.write(df_major_copy.loc[name].sort_values(by='similarities', ascending=False)['reviews'].values[0])
 st.markdown(
     "<p style='text-align:center; color: #C5C5C5;'>Free prototype preview. AI may sometimes provide innacurate "
     "information. This model was trained on Nich reviews and Rate My Professors Reviews. "
